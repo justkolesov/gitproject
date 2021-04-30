@@ -1,0 +1,32 @@
+image: python:3.8
+ 
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python -V  
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install  -r requirements.txt
+  - pip install pytest 
+  - pip install sphinx sphinx-rtd-theme
+
+test:
+  script:
+    - pytest
+
+pages:
+  script:
+    - command sphinx-build -b html ./doc ./_build/html
+    - mv doc/_build/html/ public/
+    
+  artifacts:
+    paths:
+      - public
+  
